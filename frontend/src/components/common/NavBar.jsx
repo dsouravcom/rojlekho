@@ -50,16 +50,7 @@ const NavBar = () => {
         
       </div>
       <div className="flex items-center">
-        <Link to ="/create">
-        <button className="text-white mr-8 flex ">
-          <img
-            src="https://png.pngtree.com/element_our/md/20180516/md_5afbe35ff3ec9.jpg"
-            alt="Create New"
-            className="w-6 h-6"
-          />
-          <span className="ml-2">Create New</span>
-        </button>
-        </Link>
+        
         <div className="relative">
           <button
             className="text-white flex items-center focus:outline-none"
