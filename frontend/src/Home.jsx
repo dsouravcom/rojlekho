@@ -22,10 +22,14 @@ function Home({ userName }) {
   const dummyJournals = [
     { id: 1, entry: 'Today was a great day!', createdDate: 'SUN. 27-01-2024 04:30' },
     { id: 2, entry: 'Learned a new skill!', createdDate: 'MON. 27-01-2024 04:30' },
-    { id: 2, entry: 'Learned a new skill!', createdDate: 'MON. 27-01-2024 04:30' },
-    { id: 2, entry: 'Learned a new skill!', createdDate: 'MON. 27-01-2024 04:30' },
+    { id: 3, entry: 'Learned a new skill!', createdDate: 'MON. 27-01-2024 04:30' },
+    { id: 4, entry: 'Learned a new skill!', createdDate: 'MON. 27-01-2024 04:30' },
+    { id: 5, entry: 'Learned a new skill!', createdDate: 'MON. 27-01-2024 04:30' },
+    { id: 6, entry: 'Learned a new skill!', createdDate: 'MON. 27-01-2024 04:30' },
     // Add more entries as needed
   ];
+
+  const totalJournals = dummyJournals.length;
 
   return (
     <>
@@ -49,7 +53,7 @@ function Home({ userName }) {
         </div>
 
         <div>
-          <p>Total Entry 10</p>
+          <p>Total Entry {totalJournals}</p>
         </div>
 
         <div className="flex justify-between ps-32 pr-32">
@@ -132,22 +136,8 @@ function Home({ userName }) {
           </div>
         </div>
       </div>
-
-      {/* <h1>Home</h1>
-      <p>Hello {user.displayName}</p>
-      <p>Hello {user.uid}</p>
-      <p>
-        your email is "
-        {user.emailVerified ? <span>verified</span> : <span>not verified</span>}
-        "
-      </p>
-      <p>Your phone number is "{user.phoneNumber}"</p> */}
-
-
-      
-
-
-
+        
+        {/* journal list */}
       <JournalList journals={dummyJournals} />
       </div>
       <Footer />

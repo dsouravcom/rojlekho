@@ -4,6 +4,7 @@ import Home from "./Home";
 import Login from "./components/auth/Login"
 import Signup from "./components/auth/Signup";
 import Dashboard from "./settings/Dashboard";
+import NewJournal from "./components/journal/NewJournal";
 import ProtectedRoute from '../routeController/ProtectedRoute';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/" element={<ProtectedRoute Component={Home} />} />
           <Route path="/account" element={<ProtectedRoute Component={Dashboard} />} />
+          <Route path="/create" element={<ProtectedRoute Component={NewJournal} />} />
           
         </Routes>
       </BrowserRouter>
