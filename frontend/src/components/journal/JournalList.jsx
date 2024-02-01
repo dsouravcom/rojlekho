@@ -48,7 +48,7 @@ const JournalList = () => {
         ) : (
       <ul className='mx-10'>
         {posts.map(post => (
-          <Link key={post._id}>
+          <Link to={`/post/${post._id}`} key={post._id}>
           <li className="mb-4">
             <div className='flex justify-between mx-6'>
             <h3 className="text-lg font-semibold">{post.title}</h3>

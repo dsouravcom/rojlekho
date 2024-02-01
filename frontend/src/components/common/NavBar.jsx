@@ -88,6 +88,12 @@ const NavBar = () => {
                 <hr className="border-gray-300" />
                 
                 <hr className="border-gray-300" />
+                <button>
+                  <Link to="/account" className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none">
+                    Account
+                  </Link>
+                </button>
+                <hr className="border-gray-300" />
                 <button className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 focus:outline-none"
                 onClick={onClickSignOut}
                 >

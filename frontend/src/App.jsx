@@ -5,6 +5,8 @@ import Login from "./components/auth/Login"
 import Signup from "./components/auth/Signup";
 import Dashboard from "./settings/Dashboard";
 import NewJournal from "./components/journal/NewJournal";
+import EditJournal from "./components/journal/EditJournal";
+import JournalPage from "./components/journal/JournalPage";
 import ProtectedRoute from '../routeController/ProtectedRoute';
 
 function App() {
@@ -17,6 +19,9 @@ function App() {
           <Route path="/" element={<ProtectedRoute Component={Home} />} />
           <Route path="/account" element={<ProtectedRoute Component={Dashboard} />} />
           <Route path="/create" element={<ProtectedRoute Component={NewJournal} />} />
+          <Route path="/edit/:id" element={<ProtectedRoute Component={EditJournal} />} />
+          <Route path="/post/:id" element={<ProtectedRoute Component={JournalPage} />} />
+          <Route path="/account" element={<ProtectedRoute Component={Dashboard} />} />
           
         </Routes>
       </BrowserRouter>

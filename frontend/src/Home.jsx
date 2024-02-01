@@ -57,14 +57,15 @@ function Home() {
               <div className="flex p-5 flex-col ">
                 <label className="font-semibold ">SHORT</label>
                 <select className="text-sm rounded-md p-1 w-32">
-                  <option>create time &#x2B06;</option>
-                  <option>create time &#x2B07;</option>
+                  <option>created time &#x2B06;</option>
+                  <option>modified time &#x2B07;</option>
                 </select>
               </div>
 
               <div className="flex p-5 flex-col ">
                 <label className="font-semibold ">SINCE</label>
                 <select className="text-sm rounded-md p-1 w-32">
+                  <option>this week</option>
                   <option>this month</option>
                   <option>Last 6 month</option>
                   <option>Last 12 month</option>
