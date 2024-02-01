@@ -1,9 +1,13 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
+import {auth} from '../../../firebase.js'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css';
 
 import NavBar from '../common/NavBar'
 import Footer from '../common/Footer'
+
 
 
 const modules = {
@@ -26,16 +30,42 @@ const formats = [
 
 
 const NewJournal = () => {
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState('Untitled');
   const [content, setContent] = useState('');
+  const [uid, setUid] = useState("");
 
-  const data = new FormData();
-  data.title = title;
-  data.content = content;
+  
 
-  const handleSubmit = () => {
-    // Implement your logic to save the journal entry
-    console.log(data);
+  const Navigate = useNavigate();
+
+  useEffect(() => {
+      const ifUser = auth.onAuthStateChanged((user) => {
+        setUid(user.uid);
+      });
+  
+      return ifUser; // Cleanup function to remove the listener
+    }, []);
+
+
+  
+
+  const handleSubmit = async () => {
+    if (!content) {
+      // If title or content is empty, prevent form submission
+      alert('Content are required.');
+      return;
+    }
+    try{
+    const res = await axios.post(import.meta.env.VITE_APP_CREATE_JOURNAL_URL, {title, content, uid});
+      if(res.status === 200){
+        Navigate('/')
+      }
+    }
+    catch(err){
+      console.log(err)
+    }
+
+    // console.log();
     // Add your API call or data-saving logic here
   };
 
@@ -55,6 +85,7 @@ const NewJournal = () => {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="w-full p-2 border rounded focus:outline-none focus:border-blue-500 mb-4"
+          required
         />
 
         <label htmlFor="content" className="text-lg font-medium mb-2 block">
@@ -68,6 +99,7 @@ const NewJournal = () => {
           formats={formats}
           onChange={(value) => setContent(value)}
           className="mb-16 h-96"
+          required
         />
 
         <div className='flex justify-center'>
