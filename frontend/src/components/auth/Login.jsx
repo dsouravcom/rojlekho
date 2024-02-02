@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import { auth } from '../../../firebase.js'
 
@@ -81,6 +81,14 @@ const Login = () => {
           >
             Log in
           </button>
+          </div>
+          <div>
+            <p className="text-center mt-4">
+              Don't have an account?{' '}
+              <Link to="/signup" className="text-indigo-500 hover:underline">
+                Sign up
+              </Link>
+            </p>
           </div>
         </form>
       </div>

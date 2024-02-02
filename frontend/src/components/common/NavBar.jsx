@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {signOut} from 'firebase/auth';
 import { auth } from '../../../firebase.js';
 import Home_img from '../../assets/home-icon.svg';
@@ -11,7 +11,9 @@ import Logo from '../../assets/logo.png';
 const NavBar = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [user, setUser] = useState('');
-  // const { account } = useContext(AuthContext);
+
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     auth.onAuthStateChanged((data) => {
@@ -34,7 +36,7 @@ const NavBar = () => {
       // An error happened.
       console.log(error);
     });
-    window.location.reload();
+    navigate('/login');
   }
 
   return (
