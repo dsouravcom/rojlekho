@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 import { format } from 'date-fns'
 
 
-const JournalList = () => {
+const JournalList = (prop) => {
+  const {sortingTime, limit} = prop;
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +18,7 @@ const JournalList = () => {
 
     const fetchData = async () => {
       try{
-        const response = await axios.get(`${import.meta.env.VITE_APP_JOURNALS_URL}?uid=${user.uid}`)
+        const response = await axios.get(`${import.meta.env.VITE_APP_JOURNALS_URL}?uid=${user.uid}&time=${sortingTime}&limit=${limit}`)
         const allPosts = response.data;
         setPosts(allPosts);
       } catch (err) {
@@ -30,7 +31,26 @@ const JournalList = () => {
     };
     fetchData();
   }
-)}, []);
+)}, [posts]);
+
+
+
+// useEffect(() => {
+//   const sortpost = () => {
+//   if (posts.length > 0) {
+//     const sortedPosts = [...posts]; // Create a copy of the array before sorting
+//     if (sortingTime === "created time") {
+//       sortedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+//     } else {
+//       sortedPosts.sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt));
+//     }
+//     setFinalPosts(sortedPosts);
+//   }
+// }
+// sortpost();
+
+// }, [posts, sortingTime]);
+
 
   if (loading) {
     return <p>Loading...</p>;

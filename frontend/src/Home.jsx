@@ -10,6 +10,8 @@ import Footer from "./components/common/Footer.jsx";
 
 function Home() {
   const [postCount, setPostCount] = useState(0);
+  const [sortingTime, setSortingTime] = useState("newest");
+  const [postNumber, setPostNumber] = useState('7');
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -25,8 +27,15 @@ function Home() {
     }
   )},[]);
 
+  const onSortHandleChange = (e) => {
+    setSortingTime(e.target.value);
+  };
 
-  
+  const onPostNumberHandleChange = (e) => {
+    setPostNumber(e.target.value);
+  };
+
+
   return (
     <>
       <NavBar />
@@ -56,26 +65,34 @@ function Home() {
             <div className="flex">
               <div className="flex p-5 flex-col ">
                 <label className="font-semibold ">SHORT</label>
-                <select className="text-sm rounded-md p-1 w-32">
-                  <option>created time &#x2B06;</option>
-                  <option>modified time &#x2B07;</option>
+                <select 
+                defaultValue={sortingTime}
+                onChange={onSortHandleChange}
+                className="text-sm rounded-md p-1 w-32"
+                >
+                  <option value={'newest'}>newest</option>
+                  <option value={'oldest'}>oldest</option>
                 </select>
               </div>
 
               <div className="flex p-5 flex-col ">
                 <label className="font-semibold ">SINCE</label>
-                <select className="text-sm rounded-md p-1 w-32">
-                  <option>this week</option>
-                  <option>this month</option>
-                  <option>Last 6 month</option>
-                  <option>Last 12 month</option>
-                  <option>all time</option>
+                <select 
+                defaultValue={'7'}
+                onChange={onPostNumberHandleChange}
+                className="text-sm rounded-md p-1 w-32"
+                >
+                  <option value={'7'}>this week</option>
+                  <option value={'30'}>this month</option>
+                  <option value={'180'}>Last 6 month</option>
+                  <option value={'365'}>Last 12 month</option>
+                  <option value={'all'}>all time</option>
                 </select>
               </div>
             </div>
 
             {/* //search box */}
-            <div className="pt-6">
+            {/* <div className="pt-6">
               <form>
                 <label
                   htmlFor="default-search"
@@ -130,7 +147,7 @@ function Home() {
                   </button>
                 </div>
               </form>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -141,7 +158,7 @@ function Home() {
             <h1 className="text-2xl font-bold mb-4">Created Date</h1>
           </div>
           <div className="border-[1px] border-black mb-4"></div>
-          <JournalList />
+          <JournalList sortingTime={sortingTime} limit={postNumber}/>
         </div>
       </div>
       <Footer />

@@ -16,12 +16,21 @@ router.post("/api/createjournal", async (req, res) => {
   }
 });
 
-// Journals list
+// Journals list, newest or oldest, limit or all posts path
 router.get("/api/journals", async (req, res) => {
-  const {uid} = req.query;
+  let {uid, time, limit} = req.query;
+  const limitNumber = parseInt(limit);
+  const sorting = time === 'newest' ? -1 : 1;
   try {
-    const posts = await Post.find({ uid: uid });
-    res.json(posts);
+    if(limit ==='all'){
+      const posts = await Post.find({ uid: uid }).sort({createdAt: sorting});
+      res.json(posts);
+    }
+    else{
+      const posts = await Post.find({ uid: uid }).sort({createdAt: sorting}).limit(limitNumber);
+      res.json(posts);
+    }
+    
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
@@ -80,6 +89,10 @@ router.delete("/api/deletejournal", async (req, res) => {
 }
 );
 
+router.get("/api/test", (req, res) => {
+  res.json({ message: "Test API route" });
+}
+);
 
 
 module.exports = router;
