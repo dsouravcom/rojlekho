@@ -33,6 +33,7 @@ function EditJournal() {
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [titleLength, setTitleLength] = useState(0);
 
     const Navigate = useNavigate();
 
@@ -44,6 +45,12 @@ function EditJournal() {
         }
         fetchJournal();
     }, []);
+
+    useEffect(() => {
+      setTitleLength(title.length);
+    }, [title]);
+
+    const isSubmitDisabled = titleLength > 75 || titleLength === 0;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -87,17 +94,19 @@ function EditJournal() {
     <NavBar />
     <div className="container mx-auto mt-8 min-h-screen">
       <div className=" flex flex-col mx-auto ">
-
+        <div className='flex justify-between'>
         <label htmlFor="title" className="text-lg font-medium mb-2 block">
           Title
         </label>
+        <p className="text-gray-500 mb-4">{titleLength}/75</p>
+        </div>
         <input
           type="text"
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="w-full p-2 border rounded focus:outline-none focus:border-blue-500 mb-4"
-          required
+          style={{ borderColor: titleLength > 75 ? 'red' : 'inherit' }}
         />
 
         <label htmlFor="content" className="text-lg font-medium mb-2 block">
@@ -117,6 +126,7 @@ function EditJournal() {
         <div className='flex justify-center'>
         <button
           onClick={handleSubmit}
+          disabled={isSubmitDisabled}
           className="max-w-min px-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300"
         >
           Save
