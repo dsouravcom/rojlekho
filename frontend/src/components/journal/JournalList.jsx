@@ -31,7 +31,7 @@ const JournalList = (prop) => {
     };
     fetchData();
   }
-)}, [posts]);
+)}, [sortingTime, limit]);
 
 
 
