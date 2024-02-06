@@ -133,6 +133,7 @@ function Dashboard() {
     fileInputRef.current.click();
   };
 
+  //file upload
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
 
@@ -145,14 +146,14 @@ function Dashboard() {
       const url = await getDownloadURL(storageRef);
       await updateProfile(auth.currentUser, { photoURL: url });
       // setFoerceFlag to update the image
-      setForceUpdateFlag(true);
-      setOverSize(false);
+      setForceUpdateFlag((prev) => !prev);
+      setOverSize((prev) => !prev);
     } else {
       if (!file) {
-        setOverSize(false);
+        setOverSize((prev) => !prev);
       }
       // alert("Please select an image under 2MB.");
-      setOverSize(true);
+      setOverSize((prev) => !prev);
     }
   };
 
@@ -161,7 +162,8 @@ function Dashboard() {
       photoURL:
         "https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg",
     });
-    setForceUpdateFlag(true);
+
+    setForceUpdateFlag((prev) => !prev);
   };
 
   const onDeleteHandle = () => {
