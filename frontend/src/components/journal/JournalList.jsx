@@ -31,25 +31,7 @@ const JournalList = (prop) => {
     };
     fetchData();
   }
-)}, [posts]);
-
-
-
-// useEffect(() => {
-//   const sortpost = () => {
-//   if (posts.length > 0) {
-//     const sortedPosts = [...posts]; // Create a copy of the array before sorting
-//     if (sortingTime === "created time") {
-//       sortedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-//     } else {
-//       sortedPosts.sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt));
-//     }
-//     setFinalPosts(sortedPosts);
-//   }
-// }
-// sortpost();
-
-// }, [posts, sortingTime]);
+)}, [sortingTime, limit]);
 
 
   if (loading) {

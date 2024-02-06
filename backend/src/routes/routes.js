@@ -89,6 +89,20 @@ router.delete("/api/deletejournal", async (req, res) => {
 }
 );
 
+// account delete and all journals
+router.delete("/api/deleteaccount", async (req, res) => {
+  const {uid} = req.query;
+  try {
+    await Post.deleteMany({uid: uid});
+    res.json({ message: "Account deleted successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+}
+);
+
+// Test API route
 router.get("/api/test", (req, res) => {
   res.json({ message: "Test API route" });
 }

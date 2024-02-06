@@ -3,7 +3,8 @@ const router = require('./routes/routes.js')
 const cors = require('cors')
 const mongoose = require('mongoose');
 require('dotenv').config()
-
+const morgan = require ('morgan')
+const helmet = require('helmet')
 
 
 const app = express()
@@ -11,6 +12,8 @@ const port = 8000
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'))
+app.use(helmet())
 
 
 // Configure CORS for specific IP and localhost
