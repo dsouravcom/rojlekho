@@ -46,8 +46,7 @@ function Dashboard() {
     if (newName) {
       await updateProfile(auth.currentUser, {
         displayName: newName,
-      })
-        .then(() => {
+      }).then(() => {
           setName(newName);
           Swal.fire({
             title: "Name Updated Successfully!",
@@ -56,14 +55,6 @@ function Dashboard() {
             showConfirmButton: false,
             timer: 1500,
           });
-          signOut(auth)
-            .then(() => {
-              console.log("sign out successful");
-              navigate("/login");
-            })
-            .catch((error) => {
-              console.log(error);
-            });
         })
         .catch((error) => {
           console.log(error);
