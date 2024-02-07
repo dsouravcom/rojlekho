@@ -138,7 +138,7 @@ function Dashboard() {
       await updateProfile(auth.currentUser, { photoURL: url });
       // setFoerceFlag to update the image
       setForceUpdateFlag((prev) => !prev);
-      setOverSize((prev) => !prev);
+      setOverSize(false);
     } else {
       if (!file) {
         setOverSize((prev) => !prev);
