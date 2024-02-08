@@ -31,7 +31,7 @@ const formats = [
 function EditJournal() {
     const {id} = useParams();
 
-    const [title, setTitle] = useState('');
+    const [preTitle, setPreTitle] = useState('');
     const [content, setContent] = useState('');
     const [titleLength, setTitleLength] = useState(0);
 
@@ -40,20 +40,30 @@ function EditJournal() {
     useEffect(() => {
         const fetchJournal = async () => {
             const res = await axios.get(`${import.meta.env.VITE_APP_SINGLE_JOURNAL_URL}?id=${id}`);
-            setTitle(res.data.title);
+            setPreTitle(res.data.title);
             setContent(res.data.content);
         }
         fetchJournal();
     }, []);
 
     useEffect(() => {
-      setTitleLength(title.length);
-    }, [title]);
+      setTitleLength(preTitle.length);
+    }, [preTitle]);
 
-    const isSubmitDisabled = titleLength > 75 || titleLength === 0;
+    const title = titleLength === 0 ? "Untitled" : preTitle;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if(titleLength >75){
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Title should be less than 75 characters!',
+          });
+          return;
+        }
+        
         try{
         const res = await axios.put(`${import.meta.env.VITE_APP_UPDATE_JOURNAL_URL}`, {
             id,
@@ -103,14 +113,14 @@ function EditJournal() {
         <input
           type="text"
           id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={preTitle}
+          onChange={(e) => setPreTitle(e.target.value)}
           className="w-full p-2 border rounded focus:outline-none focus:border-blue-500 mb-4"
           style={{ borderColor: titleLength > 75 ? 'red' : 'inherit' }}
         />
 
         <label htmlFor="content" className="text-lg font-medium mb-2 block">
-          Content
+          Content <span className="text-red-600 ">*</span>
         </label>
         <ReactQuill
           theme="snow"
@@ -126,7 +136,6 @@ function EditJournal() {
         <div className='flex justify-center mt-4 sm:mt-0'>
         <button
           onClick={handleSubmit}
-          disabled={isSubmitDisabled}
           className="max-w-min px-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300"
         >
           Save

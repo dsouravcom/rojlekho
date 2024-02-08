@@ -38,7 +38,7 @@ const formats = [
 ];
 
 const NewJournal = () => {
-  const [title, setTitle] = useState("");
+  const [preTitle, setPreTitle] = useState("");
   const [content, setContent] = useState("");
   const [uid, setUid] = useState("");
   const [titleLength, setTitleLength] = useState(0);
@@ -54,16 +54,37 @@ const NewJournal = () => {
 
   const handleChangeTitle = (e) => {
     const newTitle = e.target.value;
-    setTitle(newTitle);
+    setPreTitle(newTitle);
   };
 
   useEffect(() => {
-    setTitleLength(title.length);
-  }, [title]);
+    setTitleLength(preTitle.length);
+  }, [preTitle]);
 
-  const isSubmitDisabled = titleLength > 75 || titleLength === 0 || !content;
+  // const isSubmitDisabled = titleLength > 75 || !content;
+  const title = titleLength === 0 ? "Untitled" : preTitle;
 
   const handleSubmit = async () => {
+
+    if(titleLength > 75){
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Title should not exceed 75 characters",
+      
+      })
+      return;
+    }
+
+    if(content.length === 0){
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Content should not be empty",
+      
+      })
+      return;
+    }
     
     try {
       const res = await axios.post(
@@ -90,6 +111,11 @@ const NewJournal = () => {
       }
     } catch (err) {
       console.log(err);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong! Please try again after some time.",
+      });
     }
   };
 
@@ -100,15 +126,16 @@ const NewJournal = () => {
         <div className=" flex flex-col mx-auto ">
           <div className="flex justify-between">
             <label htmlFor="title" className="text-lg font-medium mb-2 block">
-              Title
+              Title 
             </label>
+            
             <p className="text-gray-500 mb-4">{titleLength}/75</p>
           </div>
           <input
             type="text"
             id="title"
             placeholder="Title"
-            value={title}
+            value={preTitle}
             onChange={handleChangeTitle}
             className="w-full p-2 border rounded focus:outline-none focus:border-blue-500 mb-4"
             style={{ borderColor: titleLength > 75 ? 'red' : 'inherit' }}
@@ -116,7 +143,7 @@ const NewJournal = () => {
           />
 
           <label htmlFor="content" className="text-lg font-medium mb-2 block">
-            Content
+            Content <span className="text-red-600 ">*</span>
           </label>
           <ReactQuill
             theme="snow"
@@ -132,7 +159,6 @@ const NewJournal = () => {
 
           <div className="flex justify-center mt-4 sm:mt-0">
             <button
-              disabled={isSubmitDisabled}
               onClick={handleSubmit}
               className="max-w-min px-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300"
             >

@@ -48,6 +48,7 @@ function Dashboard() {
         displayName: newName,
       }).then(() => {
           setName(newName);
+          document.getElementById("new_name").value = "";
           Swal.fire({
             title: "Name Updated Successfully!",
             text: "Your name has been updated successfully.",
