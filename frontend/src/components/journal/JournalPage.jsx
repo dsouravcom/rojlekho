@@ -77,7 +77,7 @@ function JournalPage() {
         <div className="container mx-auto">
           {postDocumet ? (
             <div className="max-w-2xl mx-auto my-8 p-8 bg-white rounded-md shadow-md">
-              <h2 className="text-2xl font-bold mb-4">{postDocumet.title}</h2>
+              <h2 className="text-2xl font-bold mb-4 break-words">{postDocumet.title}</h2>
               <p className="text-gray-500 mb-4">
                 {format(
                   new Date(postDocumet.createdAt),
@@ -85,7 +85,7 @@ function JournalPage() {
                 )}
               </p>
               <div
-                className="text-lg"
+                className="text-lg overflow-hidden whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: postDocumet.content }}
               />
 

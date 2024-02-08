@@ -41,9 +41,9 @@ function Home() {
       <NavBar />
       <div className="min-h-screen">
         <div className="bg-slate-300 ps-4 pr-6 ">
-          <div className="pt-5 pb-1 flex justify-between">
+          <div className="pt-5 pb-1 flex-row sm:flex justify-between">
             <h1 className="text-3xl font-semibold ">Your Daily Journal</h1>
-            <div className="bg-slate-500 p-2 rounded-md ps-2 pt-[6px]">
+            <div className="bg-slate-500 p-2 max-w-fit mt-2 sm:mt-0 rounded-md ps-2 pt-[6px]">
               <Link to="/create">
                 <button className="text-white flex ">
                   <img
@@ -62,7 +62,7 @@ function Home() {
           </div>
 
           <div className="flex justify-between ps-32 pr-32">
-            <div className="flex">
+            <div className="sm:flex flex-row justify-center">
               <div className="flex p-5 flex-col ">
                 <label className="font-semibold ">SHORT</label>
                 <select 
@@ -153,9 +153,9 @@ function Home() {
 
         {/* journal list */}
         <div className="my-7 mx-14">
-          <div className="flex justify-between mx-14">
+          <div className="flex justify-center lg:justify-between mx-14">
             <h1 className="text-2xl font-bold mb-4">Journal Entries</h1>
-            <h1 className="text-2xl font-bold mb-4">Created Date</h1>
+            <h1 className="text-2xl font-bold mb-4 invisible lg:visible">Created Date</h1>
           </div>
           <div className="border-[1px] border-black mb-4"></div>
           <JournalList sortingTime={sortingTime} limit={postNumber}/>

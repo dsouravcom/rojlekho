@@ -44,16 +44,16 @@ const JournalList = (prop) => {
 
   return (
     <>
-    <div className="my-7 mx-14">
+    <div className="my-7 mx-4 lg:mx-14">
     {posts.length === 0 ? (
           <p>There are no posts available. Please create one.</p>
         ) : (
-      <ul className='mx-10'>
+      <ul className='mx-2 lg:mx-10'>
         {posts.map(post => (
           <Link to={`/post/${post._id}`} key={post._id}>
           <li className="mb-4">
-            <div className='flex justify-between mx-6'>
-            <h3 className="text-lg font-semibold">{post.title}</h3>
+            <div className='flex flex-col justify-center lg:flex-row lg:justify-between items-center mx-2 lg:mx-6'>
+            <h3 className="container text-lg font-semibold mb-2 w-1/5 lg:mb-0 lg:w-1/2 overflow-hidden overflow-ellipsis whitespace-nowrap lg:whitespace-normal transition-all ">{post.title}</h3>
             <p className="text-gray-500">{format(new Date(post.createdAt), 'ccc d/M/yyyy h:m aaa')}</p>
             </div>
             <div className='border border-gray-400 my-2'></div>
