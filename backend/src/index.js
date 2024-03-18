@@ -32,17 +32,14 @@ const corsOptions = {
   optionsSuccessStatus: 204, // Respond with a 204 status for preflight requests
 };
 
-// app.use(cors(corsOptions));
+// Apply CORS middleware globally to all routes 
 app.use((req, res, next) => {
-  cors(corsOptions)(req, res, (err) => {
-    if (err) {
-      // Handle CORS error
-      res.status(err.status || 500).json({ error: err.message });
-    } else {
-      // Continue with the next middleware
-      next();
-    }
-  });
+  const excludeRoutes = ['/api/test']; // You can include routes that don't use Whitelisted domains.
+  if (excludeRoutes.includes(req.path)) {
+    cors()(req, res, next);
+  } else {
+    cors(corsOptions)(req, res, next);
+  }
 });
 
 
