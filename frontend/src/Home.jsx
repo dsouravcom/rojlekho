@@ -11,7 +11,6 @@ import Footer from "./components/common/Footer.jsx";
 function Home() {
   const [postCount, setPostCount] = useState(0);
   const [sortingTime, setSortingTime] = useState("newest");
-  const [postNumber, setPostNumber] = useState('7');
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -31,9 +30,10 @@ function Home() {
     setSortingTime(e.target.value);
   };
 
-  const onPostNumberHandleChange = (e) => {
-    setPostNumber(e.target.value);
-  };
+  const onSearch = (e) => {
+    e.preventDefault()
+    
+  }
 
 
   return (
@@ -68,32 +68,17 @@ function Home() {
                 <select 
                 defaultValue={sortingTime}
                 onChange={onSortHandleChange}
-                className="text-sm rounded-md p-1 w-32"
+                className="text-sm rounded-md p-1 focus:outline-none w-32"
                 >
                   <option value={'newest'}>newest</option>
                   <option value={'oldest'}>oldest</option>
                 </select>
               </div>
-
-              <div className="flex p-5 flex-col ">
-                <label className="font-semibold ">SINCE</label>
-                <select 
-                defaultValue={'7'}
-                onChange={onPostNumberHandleChange}
-                className="text-sm rounded-md p-1 w-32"
-                >
-                  <option value={'7'}>this week</option>
-                  <option value={'30'}>this month</option>
-                  <option value={'180'}>Last 6 month</option>
-                  <option value={'365'}>Last 12 month</option>
-                  <option value={'all'}>all time</option>
-                </select>
-              </div>
-            </div>
+            </div> 
 
             {/* //search box */}
-            {/* <div className="pt-6">
-              <form>
+            <div className="pt-6">
+              <form onSubmit={onSearch}>
                 <label
                   htmlFor="default-search"
                   className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -121,7 +106,7 @@ function Home() {
                   <input
                     type="search"
                     id="default-search"
-                    className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="block w-96 p-4 ps-10 text-sm text-gray-900 border focus:outline-none border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500  dark:border-gray-600 dark:placeholder-gray-900 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Search...."
                     required
                   />
@@ -147,7 +132,7 @@ function Home() {
                   </button>
                 </div>
               </form>
-            </div> */}
+            </div> 
           </div>
         </div>
 
@@ -158,7 +143,7 @@ function Home() {
             <h1 className="text-2xl font-bold mb-4 invisible lg:visible">Created Date</h1>
           </div>
           <div className="border-[1px] border-black mb-4"></div>
-          <JournalList sortingTime={sortingTime} limit={postNumber}/>
+          <JournalList sortingTime={sortingTime}/>
         </div>
       </div>
       <Footer />

@@ -18,19 +18,17 @@ router.post("/api/createjournal", async (req, res) => {
 
 // Journals list, newest or oldest, limit or all posts path
 router.get("/api/journals", async (req, res) => {
-  let {uid, time, limit} = req.query;
-  const limitNumber = parseInt(limit);
+  let {uid, time, page} = req.query;
   const sorting = time === 'newest' ? -1 : 1;
+  const pageNumber = parseInt(page) || 1;
+  const skip = (pageNumber - 1) * 10;
   try {
-    if(limit ==='all'){
-      const posts = await Post.find({ uid: uid }).sort({createdAt: sorting});
-      res.json(posts);
-    }
-    else{
-      const posts = await Post.find({ uid: uid }).sort({createdAt: sorting}).limit(limitNumber);
-      res.json(posts);
-    }
-    
+      const posts = await Post.find({ uid: uid }).skip(skip).sort({createdAt: sorting}).limit(10);
+      const postnumber = await Post.find({uid: uid});
+      const totalPosts = postnumber.length;
+
+      res.json({posts, totalPosts});
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
