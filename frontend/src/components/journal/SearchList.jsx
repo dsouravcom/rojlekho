@@ -10,7 +10,7 @@ import Footer from "../common/Footer";
 
 function SearchList() {
   const { query } = useParams();
-  const [posts, setPosts] = useState("");
+  const [posts, setPosts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
