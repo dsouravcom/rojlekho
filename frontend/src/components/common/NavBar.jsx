@@ -88,7 +88,7 @@ const onHandleEmailSendAgain = async ( e ) => {
       </div>
       <div className="flex items-center">
         
-        <div className="relative">
+        <div className="relative z-50">
           <button
             className="text-white flex items-center focus:outline-none"
             onClick={toggleProfile}
