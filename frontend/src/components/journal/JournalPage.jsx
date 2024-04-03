@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import Swal from "sweetalert2";
+import ReactQuill from "react-quill";
 
 import NavBar from "../common/NavBar";
 import Footer from "../common/Footer";
@@ -84,10 +85,18 @@ function JournalPage() {
                   "ccc d/M/yyyy h:m aaa"
                 )}
               </p>
-              <div
+              {/* <div
                 className="text-lg overflow-hidden whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: postDocumet.content }}
-              />
+              /> */}
+              <ReactQuill
+              readOnly="true"
+            value={postDocumet.content}
+            // className="mb-16 h-96"
+            modules={{
+              toolbar: false // Hide the toolbar
+            }}
+          />
 
               <div className="mt-6 flex space-x-4">
                 <Link
