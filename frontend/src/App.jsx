@@ -8,6 +8,7 @@ import Dashboard from "./settings/Dashboard";
 import NewJournal from "./components/journal/NewJournal";
 import EditJournal from "./components/journal/EditJournal";
 import JournalPage from "./components/journal/JournalPage";
+import SearchList from "./components/journal/SearchList";
 import ProtectedRoute from '../routeController/ProtectedRoute';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/create" element={<ProtectedRoute Component={NewJournal} />} />
           <Route path="/edit/:id" element={<ProtectedRoute Component={EditJournal} />} />
           <Route path="/post/:id" element={<ProtectedRoute Component={JournalPage} />} />
+          <Route path="/search/:query" element={<ProtectedRoute Component={SearchList} />} />
           <Route path="/account" element={<ProtectedRoute Component={Dashboard} />} />
           
         </Routes>

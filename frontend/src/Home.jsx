@@ -3,38 +3,35 @@ import { Link } from "react-router-dom";
 import { auth } from "../firebase.js";
 import axios from "axios";
 import NavBar from "./components/common/NavBar";
+import Footer from "./components/common/Footer.jsx";
+import JournalList from "./components/journal/JournalList.jsx";
 // importing assets
 import add_icon from "./assets/add.png";
-import JournalList from "./components/journal/JournalList.jsx";
-import Footer from "./components/common/Footer.jsx";
 
 function Home() {
   const [postCount, setPostCount] = useState(0);
   const [sortingTime, setSortingTime] = useState("newest");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
-    const fetchData = async () => {
-      try{
-      const response = await axios.get(`${import.meta.env.VITE_APP_JOURNAL_COUNT_URL}?uid=${user.uid}`);
-      setPostCount(response.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchData();
-    }
-  )},[]);
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_APP_JOURNAL_COUNT_URL}?uid=${user.uid}`
+          );
+          setPostCount(response.data);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchData();
+    });
+  }, []);
 
   const onSortHandleChange = (e) => {
     setSortingTime(e.target.value);
   };
-
-  const onSearch = (e) => {
-    e.preventDefault()
-    
-  }
-
 
   return (
     <>
@@ -65,20 +62,20 @@ function Home() {
             <div className="sm:flex flex-row justify-center">
               <div className="flex p-5 flex-col ">
                 <label className="font-semibold ">SHORT</label>
-                <select 
-                defaultValue={sortingTime}
-                onChange={onSortHandleChange}
-                className="text-sm rounded-md p-1 focus:outline-none w-32"
+                <select
+                  defaultValue={sortingTime}
+                  onChange={onSortHandleChange}
+                  className="text-sm rounded-md p-1 focus:outline-none w-32"
                 >
-                  <option value={'newest'}>newest</option>
-                  <option value={'oldest'}>oldest</option>
+                  <option value={"newest"}>newest</option>
+                  <option value={"oldest"}>oldest</option>
                 </select>
               </div>
-            </div> 
+            </div>
 
             {/* //search box */}
             <div className="pt-6">
-              <form onSubmit={onSearch}>
+              <form>
                 <label
                   htmlFor="default-search"
                   className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -106,33 +103,37 @@ function Home() {
                   <input
                     type="search"
                     id="default-search"
-                    className="block w-96 p-4 ps-10 text-sm text-gray-900 border focus:outline-none border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500  dark:border-gray-600 dark:placeholder-gray-900 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="block w-96 p-4 ps-10 text-sm text-gray-900 border focus:outline-none border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500  dark:border-gray-600 dark:placeholder-gray-900 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Search...."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     required
                   />
-                  <button
-                    type="submit"
-                    className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 20 20"
+                  <Link to={`/search/${searchQuery}`}>
+                    <button
+                      type="submit"
+                      className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                      />
-                    </svg>
-                  </button>
+                      <svg
+                        className="w-4 h-4"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                        />
+                      </svg>
+                    </button>
+                  </Link>
                 </div>
               </form>
-            </div> 
+            </div>
           </div>
         </div>
 
@@ -140,10 +141,12 @@ function Home() {
         <div className="my-7 mx-14">
           <div className="flex justify-center lg:justify-between mx-14">
             <h1 className="text-2xl font-bold mb-4">Journal Entries</h1>
-            <h1 className="text-2xl font-bold mb-4 invisible lg:visible">Created Date</h1>
+            <h1 className="text-2xl font-bold mb-4 invisible lg:visible">
+              Created Date
+            </h1>
           </div>
           <div className="border-[1px] border-black mb-4"></div>
-          <JournalList sortingTime={sortingTime}/>
+          <JournalList sortingTime={sortingTime} />
         </div>
       </div>
       <Footer />

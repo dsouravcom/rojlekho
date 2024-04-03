@@ -32,7 +32,7 @@ const JournalList = (prop) => {
   }, [currentPage, sortingTime]); // Fetch notes whenever currentPage changes
 
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber+1);
+    setCurrentPage(pageNumber + 1);
   };
 
   return (
@@ -58,30 +58,31 @@ const JournalList = (prop) => {
           ))}
         </ul>
       )}
-
-      <ReactPaginate
-        previousLabel={"Previous"}
-        nextLabel={"Next"}
-        breakLabel={"..."}
-        pageCount={totalPages}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={5}
-        onPageChange={({ selected }) => handlePageChange(selected)}
-        containerClassName={"pagination flex justify-center"}
-        activeClassName={"font-bold text-white"}
-        previousLinkClassName={
-          "px-3 py-1 bg-gray-500 border border-gray-300  rounded-lg hover:bg-gray-300"
-        }
-        nextLinkClassName={
-          "px-3 py-1 bg-gray-500 border border-gray-300 rounded-lg hover:bg-gray-300"
-        }
-        pageLinkClassName={
-          "px-3 py-1 bg-gray-500 border border-gray-300 rounded-lg hover:bg-gray-300"
-        }
-        breakLinkClassName={
-          "px-3 py-1 bg-gray-500 border border-gray-300 rounded-lg hover:bg-gray-300"
-        }
-      />
+      {posts.length > 0 && (
+        <ReactPaginate
+          previousLabel={"Previous"}
+          nextLabel={"Next"}
+          breakLabel={"..."}
+          pageCount={totalPages}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={({ selected }) => handlePageChange(selected)}
+          containerClassName={"pagination flex justify-center"}
+          activeClassName={"font-bold text-white"}
+          previousLinkClassName={
+            "px-3 py-1 bg-gray-500 border border-gray-300  rounded-lg hover:bg-gray-300"
+          }
+          nextLinkClassName={
+            "px-3 py-1 bg-gray-500 border border-gray-300 rounded-lg hover:bg-gray-300"
+          }
+          pageLinkClassName={
+            "px-3 py-1 bg-gray-500 border border-gray-300 rounded-lg hover:bg-gray-300"
+          }
+          breakLinkClassName={
+            "px-3 py-1 bg-gray-500 border border-gray-300 rounded-lg hover:bg-gray-300"
+          }
+        />
+      )}
     </div>
   );
 };
