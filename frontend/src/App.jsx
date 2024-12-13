@@ -1,34 +1,30 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./Home";
-import Login from "./components/auth/Login"
-import Signup from "./components/auth/Signup";
-import ForgotPass from "./components/auth/ForgotPass";
+import Login from "./pages/auth/Login"
+import Signup from "./pages/auth/Signup";
+import ForgotPass from "./pages/auth/ForgotPass";
 import Dashboard from "./settings/Dashboard";
-import NewJournal from "./components/journal/NewJournal";
-import EditJournal from "./components/journal/EditJournal";
-import JournalPage from "./components/journal/JournalPage";
-import SearchList from "./components/journal/SearchList";
-import ProtectedRoute from '../routeController/ProtectedRoute';
+import NewJournal from "./pages/journal/NewJournal";
+import EditJournal from "./pages/journal/EditJournal";
+import JournalPage from "./pages/journal/JournalPage";
+import SearchList from "./pages/journal/SearchList";
+import ProtectedRoute from "./protectedRoutes/Protected"
 
 function App() {
   return (
     <>
-      <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-pass" element={<ForgotPass />} />
-          <Route path="/" element={<ProtectedRoute Component={Home} />} />
-          <Route path="/account" element={<ProtectedRoute Component={Dashboard} />} />
-          <Route path="/create" element={<ProtectedRoute Component={NewJournal} />} />
-          <Route path="/edit/:id" element={<ProtectedRoute Component={EditJournal} />} />
-          <Route path="/post/:id" element={<ProtectedRoute Component={JournalPage} />} />
-          <Route path="/search/:query" element={<ProtectedRoute Component={SearchList} />} />
-          <Route path="/account" element={<ProtectedRoute Component={Dashboard} />} />
+          <Route path="/" element={<ProtectedRoute> <Home/> </ProtectedRoute>} />
+          <Route path="/account" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/create" element={<ProtectedRoute><NewJournal /></ProtectedRoute>} />
+          <Route path="/edit/:id" element={<ProtectedRoute><EditJournal /></ProtectedRoute>} />
+          <Route path="/post/:id" element={<ProtectedRoute><JournalPage /></ProtectedRoute>} />
+          <Route path="/search/:query" element={<ProtectedRoute><SearchList /></ProtectedRoute>} />
           
         </Routes>
-      </BrowserRouter>
     </>
   );
 }

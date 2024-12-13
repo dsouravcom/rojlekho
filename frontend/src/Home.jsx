@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { auth } from "../firebase.js";
-import axios from "axios";
-import NavBar from "./components/common/NavBar";
-import Footer from "./components/common/Footer.jsx";
-import JournalList from "./components/journal/JournalList.jsx";
+import NavBar from "./pages/common/NavBar";
+import Footer from "./pages/common/Footer.jsx";
+import JournalList from "./pages/journal/JournalList.jsx";
+import api from "./api/api.js";
 // importing assets
 import add_icon from "./assets/add.png";
 
@@ -13,20 +12,18 @@ function Home() {
   const [sortingTime, setSortingTime] = useState("newest");
   const [searchQuery, setSearchQuery] = useState("");
 
+  const fetchPosts = async () => {
+    try {
+      const response = await api.get("/post/count");
+      setPostCount(response.data.count);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      const fetchData = async () => {
-        try {
-          const response = await axios.get(
-            `${import.meta.env.VITE_APP_JOURNAL_COUNT_URL}?uid=${user.uid}`
-          );
-          setPostCount(response.data);
-        } catch (err) {
-          console.error(err);
-        }
-      };
-      fetchData();
-    });
+    fetchPosts();
   }, []);
 
   const onSortHandleChange = (e) => {

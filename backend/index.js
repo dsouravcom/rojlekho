@@ -5,6 +5,7 @@ require("dotenv").config();
 const morgan = require("morgan");
 const helmet = require("helmet");
 const connectDB = require("./src/config/DBConnect");
+var cookieParser = require('cookie-parser')
 
 // Import routes
 const authRoutes = require("./src/routes/authRoute");
@@ -17,6 +18,7 @@ const port = 8000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser())
 app.use(morgan("dev"));
 app.use(helmet());
 
@@ -53,7 +55,7 @@ app.use((req, res, next) => {
 // Routes defined -------------------------------------------------------------------------
 // Test API route
 router.get("/api/test", (req, res) => {
-  res.json({ message: "Test API route" });
+  res.json({ message: "Roj Lekho API is running" });
 });
 
 app.use("/api/auth", authRoutes);
@@ -62,5 +64,5 @@ app.use("/api/post", postRoutes);
 // ----------------------------------------------------------------------------------------
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`RojLekho app listening on port ${port}`);
 });

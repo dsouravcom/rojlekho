@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import api from "../../api/api";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import Swal from "sweetalert2";
@@ -16,8 +16,8 @@ function JournalPage() {
   useEffect(() => {
     const fetchPostDocument = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_APP_SINGLE_JOURNAL_URL}?id=${id}`
+        const response = await api.get(
+          `/post/post/${id}`
         );
         const data = response.data;
         setPostDocument(data);
@@ -41,8 +41,8 @@ function JournalPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.delete(
-            `${import.meta.env.VITE_APP_DELETE_JOURNAL_URL}?id=${id}`
+          const response = await api.delete(
+            `/post/delete/${id}`
           );
           if (response.status === 200) {
             Navigate("/");

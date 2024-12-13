@@ -1,6 +1,7 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const tokenCache = require("../config/cacheConfig");
 
 exports.register = async (req, res) => {
   try {
@@ -22,7 +23,7 @@ exports.register = async (req, res) => {
     }
 
     // Check if user already exists
-    const user = await User.findOne({ where: { email } });
+    const user = await User.exists({ email });
     if (user) {
       return res.status(400).json({ error: "User already exists" });
     }
@@ -37,19 +38,10 @@ exports.register = async (req, res) => {
       password: hashedPassword,
     };
 
-    // Create user
-    const newUser = await User.create(userData);
+    // Create user in the database
+    await User.create(userData);
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: newUser.id, email: newUser.email },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "30d",
-      }
-    );
-
-    res.status(201).json({ token });
+    res.status(201).json({ message: "User created successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -59,35 +51,70 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate required fields (email, password) are present
+    // Validate required fields
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ error: "Please provide all required fields" });
+      return res.status(400).json({
+        success: false,
+        error: "Please provide all required fields",
+      });
     }
 
-    // Check if user exists
-    const user = await User.findOne({email: email});
+    // Check if user exists and get password in one query
+    const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res.status(400).json({
+        success: false,
+        error: "User does not exist",
+      });
     }
 
-    // Check if password is correct
+    // Check password
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res.status(400).json({
+        success: false,
+        error: "Invalid credentials",
+      });
     }
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "30d",
-      }
-    );
+    // Generate token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "30d",
+    });
 
-    res.status(200).json({ token });
+    // Remove password from response
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
+    // Set cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // 'None' for cross-origin, 'Lax' for local
+      path: "/", // Accessible across all routes
+    });
+
+    res.status(200).json({
+      message: "User logged in successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Server error",
+    });
+  }
+};
+
+// logout user
+exports.logout = async (req, res) => {
+  try {
+    token = req.cookies.token;
+    tokenCache.del(token);
+    // Clear cookie
+    res.clearCookie("token");
+
+    res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

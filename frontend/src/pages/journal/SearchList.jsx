@@ -1,33 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import axios from "axios";
-import ReactPaginate from "react-paginate";
-import { auth } from "../../../firebase.js";
 import { format } from "date-fns";
+import { useEffect, useState } from "react";
+import ReactPaginate from "react-paginate";
+import { Link, useParams } from "react-router-dom";
+import api from "../../api/api.js";
 
-import NavBar from "../common/NavBar";
 import Footer from "../common/Footer";
+import NavBar from "../common/NavBar";
 
 function SearchList() {
   const { query } = useParams();
   const [posts, setPosts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const handlePageChange = (selectedPage) => {
+    // Add your logic to handle page change here
+    console.log(`Selected page: ${selectedPage}`);
+  };
+
   useEffect(() => {
     try {
-      auth.onAuthStateChanged((user) => {
-        const fetchJournal = async () => {
-          const response = await axios.get(
-            `${import.meta.env.VITE_APP_SEARCH_URL}?query=${query}&uid=${
-              user.uid
-            }`
-          );
-          if (response.status === 200) {
-            setPosts(response.data.result);
-          }
-        };
-        fetchJournal();
-      });
+      const fetchJournal = async () => {
+        const response = await api.get(`/post/search?search=${query}`);
+        setPosts(response.data);
+      };
+      fetchJournal();
     } catch (e) {
       console.error(e);
     }
@@ -122,7 +118,7 @@ function SearchList() {
           <div className="container mx-auto mt-8">
             {posts.length === 0 ? (
               <p className="text-center text-2xl font-fold">
-                No result found "{query}"
+                No result found &quot;{query}&quot;
               </p>
             ) : (
               <ul className="mx-2 lg:mx-10">

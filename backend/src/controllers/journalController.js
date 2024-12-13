@@ -23,17 +23,37 @@ exports.getPosts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const startIndex = (page - 1) * limit;
-    const totalPosts = await Post.countDocuments({ userId: req.user.id });
-    const posts = await Post.find({ userId: req.user.id }).skip(startIndex).limit(limit);
+    const sortBy = req.query.sortBy;
+    
+    const skip = (page - 1) * limit;
+    
+    // Use aggregation for better performance
+    const [posts, totalCount] = await Promise.all([
+      Post.find({ userId: req.user.id })
+        .sort({ createdAt: sortBy === "newest" ? -1 : 1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Post.countDocuments({ userId: req.user.id })
+    ]);
 
     res.status(200).json({
-      totalPages: Math.ceil(totalPosts / limit),
-      currentPage: page,
-      posts: posts,
+      success: true,
+      data: {
+        posts,
+        pagination: {
+          totalPages: Math.ceil(totalCount / limit),
+          currentPage: page,
+          totalPosts: totalCount,
+          hasMore: page * limit < totalCount
+        }
+      }
     });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    res.status(500).json({ 
+      success: false,
+      error: "Failed to fetch posts" 
+    });
   }
 };
 
@@ -102,6 +122,16 @@ exports.deletePost = async (req, res) => {
     res
       .status(200)
       .send({ success: "ok", message: "Post deleted successfully" });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+// get all posts count
+exports.getPostCount = async (req, res) => {
+  try {
+    const count = await Post.countDocuments({ userId: req.user.id });
+    res.status(200).send({ count });
   } catch (error) {
     res.status(400).send({ error: error.message });
   }

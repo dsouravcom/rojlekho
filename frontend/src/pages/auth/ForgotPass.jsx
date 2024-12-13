@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import{ auth } from "../../../firebase.js"
-import{ sendPasswordResetEmail } from "firebase/auth";
+// import{ auth } from "../../../firebase.js"
+// import{ sendPasswordResetEmail } from "firebase/auth";
 import Swal from "sweetalert2";
  
 function ForgotPass() {

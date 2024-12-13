@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { auth } from "../../../firebase.js";
+import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import api from "../../api/api";
 
-import NavBar from "../common/NavBar";
 import Footer from "../common/Footer";
+import NavBar from "../common/NavBar";
 
 const modules = {
   toolbar: [
@@ -19,7 +18,7 @@ const modules = {
       { indent: "-1" },
       { indent: "+1" },
     ],
-    ["link", ],
+    ["link"],
     ["clean"],
   ],
 };
@@ -37,62 +36,49 @@ const formats = [
   "link",
 ];
 
-const NewJournal = () => {
+function EditJournal() {
+  const { id } = useParams();
+
   const [preTitle, setPreTitle] = useState("");
   const [content, setContent] = useState("");
-  const [uid, setUid] = useState("");
   const [titleLength, setTitleLength] = useState(0);
 
   const Navigate = useNavigate();
 
   useEffect(() => {
-    const ifUser = auth.onAuthStateChanged((user) => {
-      setUid(user.uid);
-    });
-    return ifUser; // Cleanup function to remove the listener
+    const fetchJournal = async () => {
+      const res = await api.get(`/post/post/${id}`);
+      setPreTitle(res.data.title);
+      setContent(res.data.content);
+    };
+    fetchJournal();
   }, []);
-
-  const handleChangeTitle = (e) => {
-    const newTitle = e.target.value;
-    setPreTitle(newTitle);
-  };
 
   useEffect(() => {
     setTitleLength(preTitle.length);
   }, [preTitle]);
 
-  // const isSubmitDisabled = titleLength > 75 || !content;
   const title = titleLength === 0 ? "Untitled" : preTitle;
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    if(titleLength > 75){
+    if (titleLength > 75) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Title should not exceed 75 characters",
-      
-      })
+        text: "Title should be less than 75 characters!",
+      });
       return;
     }
 
-    if(content.length === 0){
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Content should not be empty",
-      
-      })
-      return;
-    }
-    
     try {
-      const res = await axios.post(
-        import.meta.env.VITE_APP_CREATE_JOURNAL_URL,
-        { title, content, uid }
-      );
+      const res = await api.put(`/post/update/${id}`, {
+        title,
+        content,
+      });
       if (res.status === 200) {
-        Navigate("/");
+        Navigate(`/post/${id}`);
         const Toast = Swal.mixin({
           toast: true,
           position: "top-end",
@@ -106,16 +92,11 @@ const NewJournal = () => {
         });
         Toast.fire({
           icon: "success",
-          title: "Created successfully",
+          title: "Updated successfully",
         });
       }
     } catch (err) {
       console.log(err);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Something went wrong! Please try again after some time.",
-      });
     }
   };
 
@@ -126,20 +107,17 @@ const NewJournal = () => {
         <div className=" flex flex-col mx-auto ">
           <div className="flex justify-between">
             <label htmlFor="title" className="text-lg font-medium mb-2 block">
-              Title 
+              Title
             </label>
-            
             <p className="text-gray-500 mb-4">{titleLength}/75</p>
           </div>
           <input
             type="text"
             id="title"
-            placeholder="Title"
             value={preTitle}
-            onChange={handleChangeTitle}
+            onChange={(e) => setPreTitle(e.target.value)}
             className="w-full p-2 border rounded focus:outline-none focus:border-blue-500 mb-4"
-            style={{ borderColor: titleLength > 75 ? 'red' : 'inherit' }}
-            required
+            style={{ borderColor: titleLength > 75 ? "red" : "inherit" }}
           />
 
           <label htmlFor="content" className="text-lg font-medium mb-2 block">
@@ -148,7 +126,6 @@ const NewJournal = () => {
           <ReactQuill
             theme="snow"
             id="content"
-            placeholder="Content"
             value={content}
             modules={modules}
             formats={formats}
@@ -170,6 +147,6 @@ const NewJournal = () => {
       <Footer />
     </>
   );
-};
+}
 
-export default NewJournal;
+export default EditJournal;

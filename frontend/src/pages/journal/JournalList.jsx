@@ -1,40 +1,68 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { auth } from "../../../firebase.js";
-import { Link } from "react-router-dom";
+
+import { useEffect, useState, useContext} from "react";
+import PropTypes from 'prop-types';
+import api from "../../api/api";
 import { format } from "date-fns";
 import ReactPaginate from "react-paginate";
+import { Link } from "react-router-dom";
+import UserContext from "../../context/UserContext";
 
-const JournalList = (prop) => {
-  const { sortingTime } = prop;
-
+const JournalList = ({ sortingTime }) => {
   const [posts, setPosts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      const fetchData = async () => {
-        try {
-          const response = await axios.get(
-            `${import.meta.env.VITE_APP_JOURNALS_URL}?uid=${
-              user.uid
-            }&time=${sortingTime}&page=${currentPage}`
-          );
-          setPosts(response.data.posts); // Take only the first pageSize notes
-          setTotalPages(Math.ceil(response.data.totalPosts / 10));
-        } catch (error) {
-          console.error("Error fetching notes:", error);
+  const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 0 });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { user, loading } = useContext(UserContext);
+  
+  const fetchPosts = async (page = 1) => {
+    if (!user) return;
+    
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const response = await api.get('/post/posts', {
+        params: {
+          page,
+          sortBy: sortingTime,
+          limit: 10
         }
-      };
-      fetchData();
-    });
-  }, [currentPage, sortingTime]); // Fetch notes whenever currentPage changes
+      });
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber + 1);
+      setPosts(response.data.data.posts);
+      setPagination({
+        currentPage: page,
+        totalPages: response.data.data.pagination.totalPages,
+      });
+    } catch (err) {
+      console.error('Error fetching posts:', err);
+      setError('Failed to load posts. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  const handlePageChange = ({ selected }) => {
+    const newPage = selected + 1; // selected is zero-based, so we add 1
+    fetchPosts(newPage);
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, [user]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isLoading) {
+    return <div>Loading posts...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+  
   return (
     <div className="container mx-auto mt-8">
       {posts.length === 0 ? (
@@ -63,10 +91,10 @@ const JournalList = (prop) => {
           previousLabel={"Previous"}
           nextLabel={"Next"}
           breakLabel={"..."}
-          pageCount={totalPages}
+          pageCount={pagination.totalPages}
           marginPagesDisplayed={2}
           pageRangeDisplayed={5}
-          onPageChange={({ selected }) => handlePageChange(selected)}
+          onPageChange={handlePageChange}
           containerClassName={"pagination flex justify-center"}
           activeClassName={"font-bold text-white"}
           previousLinkClassName={
@@ -81,10 +109,15 @@ const JournalList = (prop) => {
           breakLinkClassName={
             "px-3 py-1 bg-gray-500 border border-gray-300 rounded-lg hover:bg-gray-300"
           }
+          forcePage={pagination.currentPage - 1} // forcePage is zero-based
         />
       )}
     </div>
   );
+};
+
+JournalList.propTypes = {
+  sortingTime: PropTypes.string.isRequired,
 };
 
 export default JournalList;

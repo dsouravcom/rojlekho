@@ -1,19 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
-import { auth, storage } from "../../firebase.js";
-import {
-  updatePassword,
-  verifyBeforeUpdateEmail,
-  updateProfile,
-  signOut,
-  deleteUser,
-} from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import Swal from "sweetalert2";
+import { useEffect, useState, useRef, useContext } from "react";
+// import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/api";
+import UserContext from "../context/UserContext";
 
-import NavBar from "../components/common/NavBar";
-import Footer from "../components/common/Footer";
+import NavBar from "../pages/common/NavBar";
+import Footer from "../pages/common/Footer";
 
 import verified_tick from "../assets/verified.svg";
 import not_verified from "../assets/not-verified.svg";
@@ -23,101 +15,26 @@ function Dashboard() {
   const [email, setEmail] = useState("");
   const [verified, setVerified] = useState(false);
   const [avatar, setAvatar] = useState(null);
-  const [forceUpdateFlag, setForceUpdateFlag] = useState(false);
-  const [overSize, setOverSize] = useState(false);
+
+  const {user, loading} = useContext(UserContext);
 
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        setName(user.displayName);
-        setEmail(user.email);
-        setVerified(user.emailVerified);
-        setAvatar(user.photoURL);
-      }
-    });
-  }, [forceUpdateFlag, overSize]);
-  // update the name
-  const onNewNameHandleClick = async (e) => {
-    e.preventDefault();
-    const newName = document.getElementById("new_name").value;
-    if (newName) {
-      await updateProfile(auth.currentUser, {
-        displayName: newName,
-      }).then(() => {
-          setName(newName);
-          document.getElementById("new_name").value = "";
-          Swal.fire({
-            title: "Name Updated Successfully!",
-            text: "Your name has been updated successfully.",
-            icon: "success",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  };
+  
 
   // update the email
   const onNewEmailHandleClick = async (e) => {
     e.preventDefault();
     const newEmail = document.getElementById("new_email").value;
-    if (newEmail) {
-      await verifyBeforeUpdateEmail(auth.currentUser, newEmail)
-        .then(() => {
-          Swal.fire({
-            title: "Email Send Successfully!",
-            text: "A verification link has been sent to your new email address. Please verify your email address to update it.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
-          signOut(auth)
-            .then(() => {
-              console.log("sign out successful");
-              navigate("/login");
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+    
   };
 
   // update the password
   const onNewPasswordHandleClick = async (e) => {
     e.preventDefault();
     const newPassword = document.getElementById("new_password").value;
-    if (newPassword) {
-      await updatePassword(auth.currentUser, newPassword)
-        .then(() => {
-          Swal.fire({
-            title: "Password Updated Successfully!",
-            text: "Your password has been updated successfully.",
-            icon: "success",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          signOut(auth)
-            .then(() => {
-              console.log("sign out successful");
-              navigate("/login");
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+    
   };
   // handle image
   const handleButtonClick = (e) => {
@@ -129,66 +46,47 @@ function Dashboard() {
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
 
-    if (file && file.size <= 2 * 1024 * 1024) {
-      const storageRef = ref(
-        storage,
-        `avatars/${auth.currentUser.uid}/${file.name}`
-      );
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      await updateProfile(auth.currentUser, { photoURL: url });
-      // setFoerceFlag to update the image
-      setForceUpdateFlag((prev) => !prev);
-      setOverSize(false);
-    } else {
-      if (!file) {
-        setOverSize((prev) => !prev);
-      }
-      // alert("Please select an image under 2MB.");
-      setOverSize((prev) => !prev);
-    }
   };
 
   const onDeleteAvatar = async () => {
-    await updateProfile(auth.currentUser, {
-      photoURL:
-        "https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg",
-    });
-
-    setForceUpdateFlag((prev) => !prev);
+    
   };
 
   const onDeleteHandle = () => {
-    try {
-      Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel!",
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          await axios.delete(`${import.meta.env.VITE_APP_DELETE_ACCOUNT_URL}?uid=${auth.currentUser.uid}`);
-          await deleteUser(auth.currentUser)
-          .then(() => {
-          Swal.fire({
-            title: "Deleted!",
-            text: "Your account has been deleted.",
-            icon: "success",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          navigate("/login");
-        })
-        }
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   Swal.fire({
+    //     title: "Are you sure?",
+    //     text: "You won't be able to revert this!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonText: "Yes, delete it!",
+    //     cancelButtonText: "No, cancel!",
+    //     confirmButtonColor: "#d33",
+    //     cancelButtonColor: "#3085d6",
+    //   }).then(async (result) => {
+    //     if (result.isConfirmed) {
+    //       await axios.delete(`${import.meta.env.VITE_APP_DELETE_ACCOUNT_URL}?uid=${auth.currentUser.uid}`);
+          
+    //       .then(() => {
+    //       Swal.fire({
+    //         title: "Deleted!",
+    //         text: "Your account has been deleted.",
+    //         icon: "success",
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //       });
+    //       navigate("/login");
+    //     })
+    //     }
+    //   });
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -261,12 +159,12 @@ function Dashboard() {
                 </button>
               </div>
               {/* /Button */}
-              <span
+              {/* <span
                 className="text-red-500"
                 style={overSize ? { display: "block" } : { display: "none" }}
               >
                 !Please select a photo under 2mb
-              </span>
+              </span> */}
             </div>
 
             {/* Forms */}
@@ -274,13 +172,12 @@ function Dashboard() {
               {/* Name changing form */}
               <form
                 className="max-w-md mx-auto mb-4"
-                onSubmit={onNewNameHandleClick}
               >
                 <div className="flex flex-col mb-2">
                   <label>Current name</label>
                   <input
                     type="text"
-                    placeholder={name}
+                    placeholder={user.name}
                     className="border p-2"
                     disabled
                   />
@@ -322,7 +219,7 @@ function Dashboard() {
                   <input
                     type="email"
                     id="email"
-                    placeholder={email}
+                    placeholder={user.email}
                     className="border p-2"
                     disabled
                   />
