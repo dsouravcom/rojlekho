@@ -9,6 +9,7 @@ import EditJournal from "./pages/journal/EditJournal";
 import JournalPage from "./pages/journal/JournalPage";
 import SearchList from "./pages/journal/SearchList";
 import ProtectedRoute from "./protectedRoutes/Protected"
+import VerifyEmail from "./pages/auth/VerifyEmail";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/forgot-pass" element={<ForgotPass />} />
           <Route path="/" element={<ProtectedRoute> <Home/> </ProtectedRoute>} />
           <Route path="/account" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

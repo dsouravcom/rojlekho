@@ -49,7 +49,7 @@ const Login = () => {
             className="flex items-center p-2 mt-1 text-sm text-red-800 rounded-lg bg-red-50"
             role="alert"
             style={
-              error === "auth/invalid-credential"
+              error 
                 ? { display: "flex" }
                 : { display: "none" }
             }
@@ -65,7 +65,7 @@ const Login = () => {
             </svg>
             <span className="sr-only">Info</span>
             <div>
-              <span className="font-medium">alert!</span> invalid credential
+              <span className="font-medium">alert!</span> {error}
             </div>
           </div>
           {/*  */}

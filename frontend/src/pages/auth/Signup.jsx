@@ -18,7 +18,7 @@ const Signup = () => {
     try {
       setLoading(true);
       await api.post(
-        `${import.meta.env.VITE_API_URL}/auth/register`,
+        `/auth/register`,
         {
           name: name,
           email: email,
@@ -50,7 +50,7 @@ const Signup = () => {
           className="flex items-center p-2 mt-1 text-sm text-red-800 rounded-lg bg-red-50"
           role="alert"
           style={
-            error === "auth/email-already-in-use"
+            error
               ? { display: "flex" }
               : { display: "none" }
           }
@@ -66,7 +66,7 @@ const Signup = () => {
           </svg>
           <span className="sr-only">Info</span>
           <div>
-            <span className="font-medium">alert!</span> email already in use
+            <span className="font-medium">alert!</span> {error}
           </div>
         </div>
         {/*  */}

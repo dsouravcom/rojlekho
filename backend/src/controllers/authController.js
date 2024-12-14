@@ -2,6 +2,9 @@ const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const tokenCache = require("../config/cacheConfig");
+const sendVerifyEmail = require("../emails/VerifyEmail");
+const { v4: uuidv4 } = require('uuid');
+const welcomeEmail = require("../emails/WelcomeEmail");
 
 exports.register = async (req, res) => {
   try {
@@ -31,15 +34,28 @@ exports.register = async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Generate verification token and link for email verification
+    const verificationToken = uuidv4();
+    const verificationLink = `${process.env.CLIENT_URL}/verify-email?token=${verificationToken}`;
+
     // Initialize user data
     const userData = {
       name,
       email,
       password: hashedPassword,
+      emailVerificationToken: verificationToken,
+      emailVerificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
     };
 
     // Create user in the database
     await User.create(userData);
+
+    // Send verification email
+    await sendVerifyEmail({
+      name,
+      email,
+      link: verificationLink,
+    });
 
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
@@ -74,6 +90,14 @@ exports.login = async (req, res) => {
       return res.status(400).json({
         success: false,
         error: "Invalid credentials",
+      });
+    }
+
+    // Check if email is verified before logging in 
+    if (!user.isEmailVerified) {
+      return res.status(400).json({
+        success: false,
+        error: "Please verify your email first then try to login",
       });
     }
 
@@ -115,6 +139,39 @@ exports.logout = async (req, res) => {
     res.clearCookie("token");
 
     res.status(200).json({ message: "User logged out successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// verify email
+exports.verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    // Check if token is valid
+    const user = await User.findOne({
+      emailVerificationToken: token,
+      emailVerificationTokenExpiresAt: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: "Invalid or expired token" });
+    }
+
+    // Update user data
+    user.isEmailVerified = true;
+    user.emailVerificationToken = undefined;
+    user.emailVerificationTokenExpiresAt = undefined;
+
+    await user.save();
+    // Send welcome email
+    await welcomeEmail({
+      name: user.name,
+      email: user.email,
+    });
+
+    res.status(200).json({ message: "Email verified successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

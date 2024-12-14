@@ -17,6 +17,16 @@ const userSchema = new Schema(
       required: true,
       trim: true,
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerificationToken: {
+      type: String,
+    },
+    emailVerificationTokenExpiresAt: {
+      type: Date,
+    },
     premiumUser: {
       type: Boolean,
       default: false,

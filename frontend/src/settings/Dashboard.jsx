@@ -21,8 +21,6 @@ function Dashboard() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
-  
-
   // update the email
   const onNewEmailHandleClick = async (e) => {
     e.preventDefault();
