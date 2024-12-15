@@ -113,7 +113,7 @@ exports.login = async (req, res) => {
     // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV == "production",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // 'None' for cross-origin, 'Lax' for local
       path: "/", // Accessible across all routes

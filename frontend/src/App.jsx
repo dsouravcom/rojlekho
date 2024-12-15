@@ -10,6 +10,10 @@ import JournalPage from "./pages/journal/JournalPage";
 import SearchList from "./pages/journal/SearchList";
 import ProtectedRoute from "./protectedRoutes/Protected"
 import VerifyEmail from "./pages/auth/VerifyEmail";
+import Plans from "./pages/purchase/Plans";
+import Checkout from "./pages/purchase/Checkout";
+import SuccessPage from "./pages/purchase/success";
+import Error from "./pages/purchase/Error";
 
 function App() {
   return (
@@ -25,6 +29,10 @@ function App() {
           <Route path="/edit/:id" element={<ProtectedRoute><EditJournal /></ProtectedRoute>} />
           <Route path="/post/:id" element={<ProtectedRoute><JournalPage /></ProtectedRoute>} />
           <Route path="/search/:query" element={<ProtectedRoute><SearchList /></ProtectedRoute>} />
+          <Route path="/plans" element={<ProtectedRoute><Plans /></ProtectedRoute>} />
+          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/error" element={<Error />} />
+          <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
           
         </Routes>
     </>

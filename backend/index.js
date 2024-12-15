@@ -11,6 +11,7 @@ var cookieParser = require('cookie-parser')
 const authRoutes = require("./src/routes/authRoute");
 const userRoutes = require("./src/routes/userRoute");
 const postRoutes = require("./src/routes/journalRoute");
+const orderRoutes = require("./src/routes/orderRoute");
 
 
 const app = express();
@@ -61,6 +62,7 @@ router.get("/api/test", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
+app.use("/api/order", orderRoutes);
 // ----------------------------------------------------------------------------------------
 
 app.listen(port, () => {

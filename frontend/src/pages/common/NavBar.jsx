@@ -1,43 +1,19 @@
 import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-// import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
+import { Crown } from "lucide-react";
 import api from "../../api/api";
-import UserContext from "../../context/UserContext";
 import Home_img from "../../assets/home-icon.svg";
 import Logo from "../../assets/logo.png";
+import UserContext from "../../context/UserContext";
 
 const NavBar = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  // const [user, setUser] = useState("");
-  // const [isVerified, setIsVerified] = useState(true);
   const { user, loading } = useContext(UserContext);
-
-  // const navigate = useNavigate();
-  // send email verification
-  // const onHandleEmailSendAgain = async (e) => {
-  //   e.preventDefault();
-  //   // await sendEmailVerification(auth.currentUser);
-  //   const Toast = Swal.mixin({
-  //     toast: true,
-  //     position: "top-end",
-  //     showConfirmButton: false,
-  //     timer: 1500,
-  //     timerProgressBar: true,
-  //     didOpen: (toast) => {
-  //       toast.onmouseenter = Swal.stopTimer;
-  //       toast.onmouseleave = Swal.resumeTimer;
-  //     },
-  //   });
-  //   Toast.fire({
-  //     icon: "success",
-  //     title: "Email send successfully check your email",
-  //   });
-  // };
 
   const toggleProfile = () => {
     setIsProfileOpen(!isProfileOpen);
   };
-  // fuction for sign out
+  // function for sign out
   const onClickSignOut = async () => {
     try {
       await api.post("/auth/logout");
@@ -50,23 +26,6 @@ const NavBar = () => {
   if (loading) return <>Loading...</>;
   return (
     <>
-      {/* <div
-        className="bg-indigo-600"
-        style={isVerified === false ? { display: "flex" } : { display: "none" }}
-      >
-        <div className="max-w-screen-xl mx-auto px-4 py-2 items-center gap-x-4 justify-center text-white sm:flex md:px-8">
-          <p className="py-2 font-medium">
-            Your email is not verified. Please verify your email and continue
-            using the app.
-          </p>
-          <button
-            onClick={onHandleEmailSendAgain}
-            className="flex-none inline-block w-full mt-3 py-2 px-3 text-center text-indigo-600 font-medium bg-white duration-150 hover:bg-gray-100 active:bg-gray-200 rounded-lg sm:w-auto sm:mt-0 sm:text-sm"
-          >
-            send email again
-          </button>
-        </div>
-      </div> */}
       <nav className="bg-gray-800 py-4 px-8 flex justify-between items-center">
         <div className="flex items-center">
           <Link to="/">
@@ -105,6 +64,13 @@ const NavBar = () => {
                   <Link to="/account">
                     <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none">
                       Account
+                    </button>
+                  </Link>
+                  <hr className="border-gray-200" />
+                  <Link to="/plans">
+                    <button className="w-full flex gap-1 text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none">
+                      <Crown className="w-5 h-5 text-orange-400" />
+                      {user.premiumUser ? "Premium" : "Upgrade"}
                     </button>
                   </Link>
                   <hr className="border-gray-200" />
