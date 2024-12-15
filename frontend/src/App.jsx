@@ -12,7 +12,7 @@ import ProtectedRoute from "./protectedRoutes/Protected"
 import VerifyEmail from "./pages/auth/VerifyEmail";
 import Plans from "./pages/purchase/Plans";
 import Checkout from "./pages/purchase/Checkout";
-import SuccessPage from "./pages/purchase/success";
+import SuccessPage from "./pages/purchase/Success";
 import Error from "./pages/purchase/Error";
 
 function App() {
