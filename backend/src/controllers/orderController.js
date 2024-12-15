@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const { v4: uuidv4 } = require("uuid");
 const Order = require("../models/OrderModel");
 const User = require("../models/UserModel");
+const tokenCache = require("../config/cacheConfig");
 
 const instance = new razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -32,6 +33,14 @@ const createOneTimeOrder = async (req, res) => {
     });
     await newOrder.save();
     res.status(200).json(order);
+    const token = req.cookies.token;
+    
+    if (!token) {
+      return res.status(401).send({ error: "No token provided" });
+    }
+
+    // delete the user profile from cache
+    tokenCache.del(token);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
@@ -40,6 +49,12 @@ const createOneTimeOrder = async (req, res) => {
 
 const createRecurringOrder = async (req, res) => {
   try {
+    const token = req.cookies.token;
+    
+    if (!token) {
+      return res.status(401).send({ error: "No token provided" });
+    }
+
     // Add a small buffer to the current time to ensure start_at is in the future
     const startAt = Math.floor(Date.now() / 1000) + 60; // 1 minute from now
 
@@ -70,6 +85,8 @@ const createRecurringOrder = async (req, res) => {
     await newOrder.save();
 
     res.status(200).json(subscription);
+    // delete the user profile from cache
+    tokenCache.del(token);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
